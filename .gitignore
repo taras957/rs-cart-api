@@ -2,10 +2,10 @@
 /dist
 /node_modules
 
-
-
+# ENV
+.env
 # Serverless
-.serverless
+/.serverless
 # Logs
 logs
 *.log
