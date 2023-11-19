@@ -8,7 +8,7 @@ sourceFiles.forEach(file => {
   const sourcePath = path.join(__dirname, '..', file);
   const distPath = path.join(__dirname, '..', distFolder, file);
 
-  fs.renameSync(sourcePath, distPath);
+  fs.copyFileSync(sourcePath, distPath);
 });
 
-console.log('Files moved successfully!');
+console.log('Files copied successfully!');

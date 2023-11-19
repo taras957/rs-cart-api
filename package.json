@@ -10,7 +10,7 @@
   },
   "scripts": {
     "build": "npm run prebuild && nest build --webpack && npm run move-files && npm run deploy",
-    "move-files": "node scripts/moveFiles.js", 
+    "move-files": "node scripts/moveFiles.js",
     "deploy": "cd dist && npx serverless deploy",   
     "prebuild": "rimraf dist",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
@@ -35,7 +35,6 @@
     "@nestjs/typeorm": "^10.0.1",
     "@typescript-eslint/eslint-plugin": "^6.11.0",
     "@vendia/serverless-express": "^4.10.4",
-
     "aws-serverless-express": "^3.4.0",
     "class-validator": "^0.14.0",
     "helmet": "^4.2.0",
@@ -47,13 +46,10 @@
     "pg": "^8.11.3",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7",
-    "serverless-bundle": "^6.0.0",
-    "serverless-webpack": "^5.13.0",
     "typeorm": "^0.3.17",
     "uuid": "^8.3.1"
   },
   "devDependencies": {
-    "aws-lambda": "^1.0.7",
     "@nestjs/cli": "^10.2.1",
     "@nestjs/schematics": "^10.0.3",
     "@nestjs/testing": "^10.2.9",
@@ -65,7 +61,7 @@
     "@types/passport-local": "^1.0.33",
     "@types/superagent": "4.1.10",
     "@types/supertest": "^2.0.11",
-    "class-transformer": "^0.5.1",
+    "aws-lambda": "^1.0.7",
     "eslint": "8.53.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-import": "^2.29.0",
