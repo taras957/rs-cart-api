@@ -85,7 +85,7 @@ export class CartController {
     }
 
     const { id: cartId, items } = cart;
-    const order = this.orderService.create({
+    const order = this.orderService.createOrder({
       ...body, // TODO: validate and pick only necessary data
       userId,
       cartId,

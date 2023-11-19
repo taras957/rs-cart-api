@@ -1,4 +1,3 @@
-// entities/cart-item.entity.ts
 import {
   Entity,
   PrimaryGeneratedColumn,

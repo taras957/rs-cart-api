@@ -34,7 +34,7 @@ provider:
 
 functions:
   main:
-    handler: dist/main.handler
+    handler: ./main.handler
     runtime: nodejs18.x
     events:
       - http:

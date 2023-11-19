@@ -8,6 +8,7 @@ import { AuthModule } from './auth/auth.module';
 import { OrderModule } from './order/order.module';
 import { Carts, CartItems } from './cart/entities';
 import { ConfigModule } from '@nestjs/config';
+import { Order } from './order/entities/order.entity';
 
 @Module({
   imports: [
@@ -19,7 +20,7 @@ import { ConfigModule } from '@nestjs/config';
       port: Number(process.env.DB_PORT),
       password: process.env.DB_PASS,
       username: process.env.DB_USER,
-      entities: [Carts, CartItems],
+      entities: [Carts, CartItems, Order],
       database: process.env.DB_NAME,
       synchronize: true,
       logging: true,
