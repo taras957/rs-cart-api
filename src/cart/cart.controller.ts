@@ -38,65 +38,70 @@ export class CartController {
   // @UseGuards(JwtAuthGuard)
   // @UseGuards(BasicAuthGuard)
   @Put()
-  updateUserCart(@Query('userId') userId: string, @Body() body) {
-    console.log(
-      '🚀 ~ file: cart.controller.ts:42 ~ CartController ~ updateUserCart ~ body:',
-      body,
-    );
-    // TODO: validate body payload...
-    const cart = this.cartService.updateByUserId(userId, body);
+  async updateUserCart(@Query('userId') userId: string, @Body() body) {
+    try {
+      const cart = await this.cartService.updateByUserId(userId, body);
 
-    return {
-      statusCode: HttpStatus.OK,
-      message: 'OK',
-      data: {
-        cart,
-      },
-    };
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'OK',
+        data: {
+          cart,
+        },
+      };
+    } catch (error) {
+      return {
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        message: 'Server Error',
+      };
+    }
   }
 
   // @UseGuards(JwtAuthGuard)
   // @UseGuards(BasicAuthGuard)
   @Delete()
   async clearUserCart(@Query('userId') userId: string) {
-    await this.cartService.removeByUserId(userId);
+    try {
+      await this.cartService.removeByUserId(userId);
 
-    return {
-      statusCode: HttpStatus.OK,
-      message: 'OK',
-    };
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'OK',
+      };
+    } catch (error) {
+      return {
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        message: 'Server Error',
+      };
+    }
   }
 
   // @UseGuards(JwtAuthGuard)
   // @UseGuards(BasicAuthGuard)
   @Post('checkout')
-  async checkout(@Req() req: AppRequest, @Body() body) {
-    const userId = getUserIdFromRequest(req);
+  async checkout(@Query('userId') userId: string, @Body() body) {
     const cart = await this.cartService.findByUserId(userId);
 
     if (!(cart && cart.items.length)) {
-      const statusCode = HttpStatus.BAD_REQUEST;
-      req.statusCode = statusCode;
-
       return {
-        statusCode,
+        statusCode: HttpStatus.BAD_REQUEST,
         message: 'Cart is empty',
       };
     }
 
     const { id: cartId, items } = cart;
-    const order = this.orderService.createOrder({
-      ...body, // TODO: validate and pick only necessary data
+    const order = await this.orderService.createOrder({
+      ...body,
       userId,
       cartId,
       items,
     });
-    this.cartService.removeByUserId(userId);
 
+    this.cartService.checkout(userId);
     return {
       statusCode: HttpStatus.OK,
       message: 'OK',
-      data: { order },
+      data: { order, cart },
     };
   }
 }

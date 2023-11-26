@@ -2,14 +2,17 @@ import { Injectable } from '@nestjs/common';
 import { Carts as CartEntity } from '../entities/cart.entity';
 import { Status } from '../entities/cart.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, Transaction } from 'typeorm';
 import { CreateCartDto } from '../dto/cart.dto';
+import { CartItems } from '../entities';
 
 @Injectable()
 export class CartService {
   constructor(
     @InjectRepository(CartEntity)
     private readonly cartRepository: Repository<CartEntity>,
+    @InjectRepository(CartItems)
+    private readonly cartItemsRepository: Repository<CartItems>,
   ) {}
 
   async findByUserId(id: string): Promise<CartEntity> {
@@ -53,12 +56,35 @@ export class CartService {
   ) {
     const { id: cart_id, ...cart } = await this.findOrCreateByUserId(userId);
 
-    cart.items = items.map(item => ({ ...item, cart_id }));
+    await this.cartItemsRepository.delete({ cart_id });
 
+    const cartItems = items.map((item) => {
+      const cartItem = new CartItems();
+      cartItem.product_id = item.product_id;
+      cartItem.count = item.count;
+      cartItem.cart_id = cart_id;
+      this.cartItemsRepository.save(cartItem);
+      return cartItem;
+    });
+
+    cart.items = cartItems;
     return this.cartRepository.save(cart);
   }
 
   async removeByUserId(userId: string) {
     return this.cartRepository.delete({ user_id: userId });
+  }
+
+  async checkout(userId: string) {
+    const cart = await this.cartRepository.findOne({
+      where: { user_id: userId },
+    });
+    if (!cart) {
+      throw new Error('Cart does not exist');
+    }
+
+    cart.status = Status.ORDERED;
+
+    return this.cartRepository.save(cart);
   }
 }

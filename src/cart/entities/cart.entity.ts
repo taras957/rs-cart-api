@@ -35,10 +35,8 @@ export class Carts {
   })
   status: Status;
 
-  @OneToMany(
-    () => CartItems,
-    cartItem => cartItem.cart,
-    { cascade: true },
-  )
+  @OneToMany(() => CartItems, (cartItem) => cartItem.cart, {
+    onUpdate: 'CASCADE',
+  })
   items: CartItems[];
 }
