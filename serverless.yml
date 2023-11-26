@@ -1,0 +1,49 @@
+service: cart-service
+
+plugins:
+  - serverless-dotenv-plugin
+  - serverless-offline
+
+custom:
+  bundle:
+    concurrency: 5
+    stats: false
+    generateStatsFiles: false
+    esbuild: false
+    disableForkTsChecker: false
+    tsConfig: "./tsconfig.json"
+    packager: npm
+    minifyOptions:
+      keepNames: true
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  stage: 'dev'
+  region: 'eu-west-1'
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - rds-db:connect
+      Resource: 
+        Fn::Sub: "arn:aws:rds:${AWS::Region}:${AWS::AccountId}:db:cart-service"
+      Condition:
+        StringEquals:
+          "aws:PrincipalTag/service": "rds.amazonaws.com"
+          "aws:PrincipalTag/dbname": "cart-service"
+
+functions:
+  main:
+    handler: ./main.handler
+    runtime: nodejs18.x
+    events:
+      - http:
+          path: /
+          method: ANY
+          cors: false
+          private: false
+      - http:
+          path: '{proxy+}'
+          method: ANY
+          cors: false
+          private: false
