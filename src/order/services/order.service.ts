@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { OrderDTO } from '../dto/order.dto';
-import {Carts as CartEntity} from '../../cart/entities'
+import { Carts as CartEntity } from '../../cart/entities';
 import { Order } from '../entities/order.entity';
 
 @Injectable()
@@ -14,11 +14,15 @@ export class OrderService {
     private readonly cartRepository: Repository<CartEntity>,
   ) {}
 
+  async getAllOrders() {
+    return await this.orderRepository.find();
+  }
+
   async getOrderById(id: string): Promise<OrderDTO> {
     const order = await this.orderRepository.findOne({
       where: {
-        id
-      }
+        id,
+      },
     });
 
     if (!order) {
@@ -30,24 +34,25 @@ export class OrderService {
 
   async createOrder(orderDTO: OrderDTO): Promise<OrderDTO> {
     const createdOrder = await this.orderRepository.save(orderDTO);
-    
-    const cart = await this.cartRepository.findOne({where:{
-      id:orderDTO.cart_id
-    }});
-    
+
     return new OrderDTO(createdOrder);
   }
 
   async updateOrder(id: string, orderDTO: OrderDTO): Promise<OrderDTO> {
-    const existingOrder = await this.orderRepository.findOne({ where: {
-      id
-    }});
+    const existingOrder = await this.orderRepository.findOne({
+      where: {
+        id,
+      },
+    });
 
     if (!existingOrder) {
       throw new NotFoundException(`Order with ID ${id} not found`);
     }
 
-    const updatedOrder = await this.orderRepository.save({ ...existingOrder, ...orderDTO });
+    const updatedOrder = await this.orderRepository.save({
+      ...existingOrder,
+      ...orderDTO,
+    });
     return new OrderDTO(updatedOrder);
   }
 
