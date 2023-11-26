@@ -12,7 +12,6 @@ import {
 
 // import { BasicAuthGuard, JwtAuthGuard } from '../auth';
 import { OrderService } from '../order';
-import { AppRequest, getUserIdFromRequest } from '../shared';
 
 import { CartService } from './services';
 
@@ -22,6 +21,16 @@ export class CartController {
     private cartService: CartService,
     private orderService: OrderService,
   ) {}
+
+  @Get('all')
+  async carts() {
+    const carts = await this.cartService.findAll();
+    return {
+      statusCode: HttpStatus.OK,
+      message: 'OK',
+      data: { carts },
+    };
+  }
 
   // @UseGuards(JwtAuthGuard)
   // @UseGuards(BasicAuthGuard)

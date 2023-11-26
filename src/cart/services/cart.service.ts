@@ -15,6 +15,10 @@ export class CartService {
     private readonly cartItemsRepository: Repository<CartItems>,
   ) {}
 
+  async findAll() {
+    return this.cartRepository.find();
+  }
+
   async findByUserId(id: string): Promise<CartEntity> {
     const cart = await this.cartRepository.findOne({
       where: { user_id: id },
